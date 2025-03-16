@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package auth;
+
+option java_package = "com.example.auth.grpc";
+option java_multiple_files = true;
+
+service AuthService {
+  rpc ValidateToken (TokenRequest) returns (UserResponse) {}
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  string telegram_id = 4;
+  repeated string roles = 5;
+}
