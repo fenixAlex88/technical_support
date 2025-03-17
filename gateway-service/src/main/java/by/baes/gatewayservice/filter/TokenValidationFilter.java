@@ -1,6 +1,6 @@
 package by.baes.gatewayservice.filter;
 
-import by.baes.gatewayservice.config.GrpcAuthService;
+import by.baes.gatewayservice.service.GrpcAuthService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

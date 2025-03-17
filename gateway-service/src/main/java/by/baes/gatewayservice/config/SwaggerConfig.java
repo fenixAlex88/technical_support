@@ -1,13 +1,16 @@
 package by.baes.gatewayservice.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
+@Slf4j
 public class SwaggerConfig {
 
     private final DiscoveryClient discoveryClient;
@@ -16,20 +19,29 @@ public class SwaggerConfig {
     public SwaggerConfig(DiscoveryClient discoveryClient, SwaggerUiConfigProperties swaggerUiConfigProperties) {
         this.discoveryClient = discoveryClient;
         this.swaggerUiConfigProperties = swaggerUiConfigProperties;
-        configureSwaggerUi(); // Вызываем конфигурацию при создании объекта
+        configureSwaggerUi(); // Начальная конфигурация
     }
 
     private void configureSwaggerUi() {
         Set<SwaggerUiConfigProperties.SwaggerUrl> urls = new HashSet<>();
         discoveryClient.getServices().forEach(serviceId -> {
-            if (!serviceId.equals("gateway-service") && !serviceId.equals("eureka-server")) {
+            if (!serviceId.equalsIgnoreCase("gateway-service") && !serviceId.equalsIgnoreCase("eureka-server")) {
+                String url = "/v3/api-docs/" + serviceId;
                 urls.add(new SwaggerUiConfigProperties.SwaggerUrl(
                         serviceId,
-                        "/v3/api-docs/" + serviceId,
+                        url,
                         serviceId + " API"
                 ));
+                log.info("Added Swagger URL for service: {} -> {}", serviceId, url);
             }
         });
         swaggerUiConfigProperties.setUrls(urls);
+        swaggerUiConfigProperties.setTryItOutEnabled(true);
+    }
+
+    @Scheduled(fixedRate = 30000) // Обновляем каждые 30 секунд
+    public void refreshSwaggerUi() {
+        log.debug("Refreshing Swagger UI configuration");
+        configureSwaggerUi();
     }
 }

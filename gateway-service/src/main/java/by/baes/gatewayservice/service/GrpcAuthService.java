@@ -1,4 +1,4 @@
-package by.baes.gatewayservice.config;
+package by.baes.gatewayservice.service;
 
 import by.baes.auth.grpc.AuthServiceGrpc;
 import by.baes.auth.grpc.TokenRequest;

@@ -2,7 +2,7 @@ package by.baes.authservice.dto;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class UserDto {
@@ -10,5 +10,5 @@ public class UserDto {
     private String name;
     private String email;
     private String telegramId;
-    private List<String> roles;
+    private Set<String> roles;
 }

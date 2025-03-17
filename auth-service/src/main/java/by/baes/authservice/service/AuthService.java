@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,26 +60,7 @@ public class AuthService {
             throw new UserAlreadyExistsException("Username already exists: " + request.getName());
         }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
-        user.setTelegramId(request.getTelegramId());
-
-        Set<Role> roles = request.getRoles() != null && !request.getRoles().isEmpty()
-                ? request.getRoles().stream()
-                .map(roleName -> roleRepository.findByName(roleName)
-                        .orElseThrow(() -> {
-                            log.error("Role not found: {}", roleName);
-                            return new RoleNotFoundException("Role not found: " + roleName);
-                        }))
-                .collect(Collectors.toSet())
-                : Set.of(roleRepository.findByName("USER")
-                .orElseThrow(() -> {
-                    log.error("Default role USER not found");
-                    return new RoleNotFoundException("Default role USER not found");
-                }));
-        user.setRoles(roles);
+        User user = userMapper.toEntity(request, passwordEncoder, roleRepository);
 
         userRepository.save(user);
         String token = jwtUtil.generateToken(user);

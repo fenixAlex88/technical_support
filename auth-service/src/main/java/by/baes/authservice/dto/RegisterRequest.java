@@ -3,7 +3,7 @@ package by.baes.authservice.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class RegisterRequest {
@@ -15,5 +15,5 @@ public class RegisterRequest {
 
     private String email;
     private String telegramId;
-    private List<String> roles;
+    private Set<String> roles;
 }
