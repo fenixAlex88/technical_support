@@ -14,7 +14,6 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +36,6 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
 
-
     public String login(LoginRequest request) {
         log.debug("Login attempt for user: {}", request.getName());
         User user = userRepository.findByName(request.getName())
@@ -56,7 +54,6 @@ public class AuthService {
         return token;
     }
 
-    @CachePut(value = "users", key = "#result.token")
     public String register(RegisterRequest request) {
         log.debug("Register attempt for user: {}", request.getName());
         if (userRepository.existsByName(request.getName())) {
@@ -91,9 +88,9 @@ public class AuthService {
         return token;
     }
 
-    @Cacheable(value = "users", key = "#token")
-    public User validateToken(String token) {
-        log.debug("Validating token");
+    @Cacheable(value = "userDtos", key = "#token")
+    public UserDto validateToken(String token) {
+        log.debug("Validating token: {}", token);
         Claims claims;
         try {
             claims = jwtUtil.validateToken(token);
@@ -106,11 +103,12 @@ public class AuthService {
                     log.error("User not found for token subject: {}", claims.getSubject());
                     return new UserNotFoundException("User not found: " + claims.getSubject());
                 });
+        UserDto userDto = userMapper.toDto(user);
         log.info("Token validated for user: {}", claims.getSubject());
-        return user;
+        return userDto;
     }
 
-    @CacheEvict(value = "users", key = "#token")
+    @CacheEvict(value = "userDtos", key = "#token")
     public void logout(String token) {
         log.debug("Logout attempt for token");
         try {

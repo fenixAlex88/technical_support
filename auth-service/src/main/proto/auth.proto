@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-option java_package = "com.example.auth.grpc";
+option java_package = "by.baes.auth.grpc";
 option java_multiple_files = true;
 
 service AuthService {

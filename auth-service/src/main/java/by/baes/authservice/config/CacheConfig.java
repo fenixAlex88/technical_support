@@ -1,5 +1,6 @@
 package by.baes.authservice.config;
 
+import by.baes.authservice.dto.UserDto;
 import by.baes.authservice.entity.User;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +19,14 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        Jackson2JsonRedisSerializer<User> serializer = new Jackson2JsonRedisSerializer<>(User.class);
-
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+        Jackson2JsonRedisSerializer<UserDto> userDtoSerializer = new Jackson2JsonRedisSerializer<>(UserDto.class);
+        RedisCacheConfiguration userDtoConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(24))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userDtoSerializer))
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(config)
+                .withCacheConfiguration("userDtos", userDtoConfig)
                 .build();
     }
 }

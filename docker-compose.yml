@@ -1,13 +1,6 @@
 version: '3.8'
 
 services:
-  eureka-server:
-    image: springcloud/eureka
-    ports:
-      - "8761:8761"
-    environment:
-      - EUREKA_INSTANCE_HOSTNAME=localhost
-
   postgres:
     image: postgres:15
     environment:
