@@ -3,9 +3,11 @@ version: '3.8'
 services:
 
   eureka-server:
-    build: ./eureka-server
+    build: ./eureka-service
     ports:
       - "8761:8761"
+    networks:
+      - app-network
 
   postgres:
     image: postgres:15

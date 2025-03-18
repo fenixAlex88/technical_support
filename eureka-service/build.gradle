@@ -29,5 +29,5 @@ dependencies {
 }
 
 springBoot {
-    mainClass = 'by.baes.eureka.EurekaApplication'
+    mainClass = 'by.baes.eurekaservice.EurekaServiceApplication'
 }
