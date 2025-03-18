@@ -24,6 +24,15 @@ spring:
             - Path=/api/photos/**
           filters:
             - StripPrefix=1
+        - id: ticket-service
+          uri: lb://ticket-service
+          predicates:
+            - Path=/api/tickets/**
+          filters:
+            - StripPrefix=1
+            - name: TokenValidationFilter
+              args:
+                roles: USER, ADMIN
         - id: openapi-auth
           uri: lb://auth-service
           predicates:
@@ -36,6 +45,12 @@ spring:
             - Path=/v3/api-docs/photos3-service/**
           filters:
             - RewritePath=/v3/api-docs/photos3-service(?<segment>.*), /v3/api-docs$\{segment}
+        - id: openapi-ticket
+          uri: lb://ticket-service
+          predicates:
+            - Path=/v3/api-docs/ticket-service/**
+          filters:
+            - RewritePath=/v3/api-docs/ticket-service(?<segment>.*), /v3/api-docs$\{segment}
       filter:
         json-to-grpc:
           enabled: false
